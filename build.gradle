@@ -1,0 +1,25 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath "org.bouncycastle:bcprov-jdk16:1.45"
+  }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+group = 'com.helloclue.gradle.crypto'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile gradleApi()
+  compile localGroovy()
+
+  compile "org.bouncycastle:bcprov-jdk16:1.45"
+}

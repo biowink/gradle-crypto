@@ -27,10 +27,10 @@ class CryptoPlugin implements Plugin<Project> {
 }
 
 class CryptoPluginExtension {
-  String ciphertext = null
-  String key = null
-  String iv = null
-  String plaintext = null
+  byte[] ciphertext = null
+  byte[] key = null
+  byte[] iv = null
+  byte[] plaintext = null
   int plaintextLength = 0
   int ciphertextLength = 0
 }
@@ -54,8 +54,9 @@ class CryptoPluginBaseTask extends DefaultTask {
     contentLength += cipher.doFinal(ciphertext, contentLength)
     project.gradleCrypto.ciphertextLength = contentLength
     project.gradleCrypto.plaintextLength = plaintext.length
-    project.gradleCrypto.ciphertext = ciphertext.encodeBase64().toString()
-    project.gradleCrypto.iv = cipher.getIV().encodeBase64().toString()
+    project.gradleCrypto.ciphertext = ciphertext
+    project.gradleCrypto.iv = cipher.IV
+    project.gradleCrypto.key = key.encoded
   }
 
   byte[] decrypt (byte[] ciphertext, int ciphertextLength, int plaintextLength, SecretKeySpec key, IvParameterSpec iv) {
@@ -71,9 +72,7 @@ class CryptoPluginEncryptTask extends CryptoPluginBaseTask {
   @TaskAction
   def encrypt() {
     SecretKeySpec key = generateKey()
-    def plaintext = project.gradleCrypto.plaintext
-    encrypt(plaintext as byte[], key)
-    project.gradleCrypto.key = key.getEncoded().encodeBase64().toString()
+    encrypt(project.gradleCrypto.plaintext, key)
   }
 
   SecretKeySpec generateKey () {
@@ -90,12 +89,12 @@ class CryptoPluginDecryptTask extends CryptoPluginBaseTask {
   def decrypt() {
     Security.addProvider(new BouncyCastleProvider())
     cipher = Cipher.getInstance('AES/CBC/PKCS7Padding', 'BC')
-    def key = createKeyFromBytes(project.gradleCrypto.key.decodeBase64() as byte[])
-    def iv = new IvParameterSpec(project.gradleCrypto.iv.decodeBase64() as byte[])
-    def ciphertext = project.gradleCrypto.ciphertext.decodeBase64() as byte[]
+    def key = createKeyFromBytes(project.gradleCrypto.key)
+    def iv = new IvParameterSpec(project.gradleCrypto.iv)
+    def ciphertext = project.gradleCrypto.ciphertext
     def ciphertextLength = project.gradleCrypto.ciphertextLength
     def plaintextLength = project.gradleCrypto.plaintextLength
     def plaintext = decrypt(ciphertext, ciphertextLength, plaintextLength, key, iv)
-    project.gradleCrypto.plaintext = new String(plaintext)
+    project.gradleCrypto.plaintext = plaintext
   }
 }

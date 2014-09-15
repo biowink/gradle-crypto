@@ -1,4 +1,4 @@
-abcdefghijklmnopqrstuvwxyz
-ABCDEFGHIJKLMNOPQRSTUVWXYZ
+abcdefghijklmnopqrstuvwxyzåäö
+ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ
 0123456789
 

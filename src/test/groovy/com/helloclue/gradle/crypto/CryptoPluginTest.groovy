@@ -25,7 +25,10 @@ class CryptoPluginTest {
   void gradleCryptoPluginEncryptsFile() {
     Project project = ProjectBuilder.builder().build()
     project.apply plugin: 'gradle-crypto'
-    def plaintext = new File('src/test/resources/startup.txt').getText()
+    def plaintext = null
+    new File('src/test/resources/startup.txt').withInputStream { is ->
+      plaintext = is.bytes
+    }
     project.gradleCrypto.plaintext = plaintext
     project.tasks.encrypt.execute()
     assertNotNull(project.gradleCrypto.ciphertext)
@@ -39,11 +42,17 @@ class CryptoPluginTest {
   void gradleCryptoPluginDecryptsFile() {
     Project project = ProjectBuilder.builder().build()
     project.apply plugin: 'gradle-crypto'
-    def plaintext = new File('src/test/resources/startup.txt').getText()
+    def plaintext = null
+    new File('src/test/resources/counting.txt').withInputStream { is ->
+      plaintext = is.bytes
+    }
     project.gradleCrypto.plaintext = plaintext
     project.tasks.encrypt.execute()
     project.gradleCrypto.plaintext = null
     project.tasks.decrypt.execute()
-    assertEquals(project.gradleCrypto.plaintext, plaintext)
+    /* new File('src/test/resources/counting.txt.out').withOutputStream { os -> */
+    /*   os.write(project.gradleCrypto.plaintext) */
+    /* } */
+    assertArrayEquals(project.gradleCrypto.plaintext, plaintext)
   }
 }

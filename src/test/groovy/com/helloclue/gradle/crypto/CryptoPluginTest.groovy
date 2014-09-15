@@ -15,13 +15,6 @@ class CryptoPluginTest {
   }
 
   @Test
-  void gradleCryptoPluginAddsGradleCryptoExtensionToProject() {
-    Project project = ProjectBuilder.builder().build()
-    project.apply plugin: 'gradle-crypto'
-    assertNotNull(project.gradleCrypto)
-  }
-
-  @Test
   void gradleCryptoPluginEncryptsFile() {
     Project project = ProjectBuilder.builder().build()
     project.apply plugin: 'gradle-crypto'
@@ -29,13 +22,13 @@ class CryptoPluginTest {
     new File('src/test/resources/startup.txt').withInputStream { is ->
       plaintext = is.bytes
     }
-    project.gradleCrypto.plaintext = plaintext
+    project.tasks.encrypt.inputs.property('plaintext', plaintext)
     project.tasks.encrypt.execute()
-    assertNotNull(project.gradleCrypto.ciphertext)
-    assertNotNull(project.gradleCrypto.ciphertextLength)
-    assertNotNull(project.gradleCrypto.key)
-    assertNotNull(project.gradleCrypto.iv)
-    assertNotNull(project.gradleCrypto.plaintextLength)
+    assertNotNull(project.tasks.encrypt.ext.result.ciphertext)
+    assertNotNull(project.tasks.encrypt.ext.result.ciphertextLength)
+    assertNotNull(project.tasks.encrypt.ext.result.key)
+    assertNotNull(project.tasks.encrypt.ext.result.iv)
+    assertNotNull(project.tasks.encrypt.ext.result.plaintextLength)
   }
 
   @Test
@@ -46,13 +39,14 @@ class CryptoPluginTest {
     new File('src/test/resources/counting.txt').withInputStream { is ->
       plaintext = is.bytes
     }
-    project.gradleCrypto.plaintext = plaintext
+    project.tasks.encrypt.inputs.property('plaintext', plaintext)
     project.tasks.encrypt.execute()
-    project.gradleCrypto.plaintext = null
+    project.tasks.decrypt.inputs.properties(project.tasks.encrypt.ext.result)
+    println project.tasks.encrypt.ext.result
     project.tasks.decrypt.execute()
     /* new File('src/test/resources/counting.txt.out').withOutputStream { os -> */
     /*   os.write(project.gradleCrypto.plaintext) */
     /* } */
-    assertArrayEquals(project.gradleCrypto.plaintext, plaintext)
+    assertArrayEquals(project.tasks.decrypt.result.plaintext, plaintext)
   }
 }

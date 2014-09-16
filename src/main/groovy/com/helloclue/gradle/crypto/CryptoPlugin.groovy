@@ -22,6 +22,8 @@ class CryptoPlugin implements Plugin<Project> {
   void apply (Project project) {
     project.task('encrypt', type: CryptoPluginEncryptTask)
     project.task('decrypt', type: CryptoPluginDecryptTask)
+    project.task('encryptFiles', type: CryptoPluginEncryptFilesTask)
+    project.task('decryptFiles', type: CryptoPluginDecryptFilesTask)
   }
 }
 
@@ -35,6 +37,14 @@ class CryptoPluginBaseTask extends DefaultTask {
 
   SecretKeySpec createKeyFromBytes(byte[] bytes) {
     new SecretKeySpec(bytes, 'AES')
+  }
+
+  SecretKeySpec generateKey () {
+    int size = 16
+    byte[] bytes = new byte[size]
+    SecureRandom secureRandom = new SecureRandom()
+    secureRandom.nextBytes(bytes)
+    createKeyFromBytes(bytes)
   }
 
   Map encrypt (byte[] plaintext, SecretKeySpec key) {
@@ -69,26 +79,58 @@ class CryptoPluginEncryptTask extends CryptoPluginBaseTask {
     SecretKeySpec key = generateKey()
     ext.result = encrypt(inputs.properties.plaintext, key)
   }
-
-  SecretKeySpec generateKey () {
-    int size = 16
-    byte[] bytes = new byte[size]
-    SecureRandom secureRandom = new SecureRandom()
-    secureRandom.nextBytes(bytes)
-    createKeyFromBytes(bytes)
-  }
 }
 
 class CryptoPluginDecryptTask extends CryptoPluginBaseTask {
   @TaskAction
   void decrypt() {
-    Security.addProvider(new BouncyCastleProvider())
-    cipher = Cipher.getInstance('AES/CBC/PKCS7Padding', 'BC')
     def key = createKeyFromBytes(inputs.properties.key)
     def iv = new IvParameterSpec(inputs.properties.iv)
     def ciphertext = inputs.properties.ciphertext
     def ciphertextLength = inputs.properties.ciphertextLength
     def plaintextLength = inputs.properties.plaintextLength
-     ext.result = decrypt(ciphertext, ciphertextLength, plaintextLength, key, iv)
+    ext.result = decrypt(ciphertext, ciphertextLength, plaintextLength, key, iv)
+  }
+}
+
+class CryptoPluginEncryptFilesTask extends CryptoPluginBaseTask {
+  @TaskAction
+  void encryptFiles() {
+    ext.secrets = [:]
+    inputs.properties.plaintextFiles.each { file ->
+      file.withInputStream { is ->
+        def plaintext = is.bytes
+        SecretKeySpec key = generateKey()
+        def result = encrypt(plaintext, key)
+        def ciphertextFile = File.createTempFile('enc.', '.enc', new File(file.parent))
+        ciphertextFile.withOutputStream { os -> os.write(result.ciphertext) }
+        outputs.file(ciphertextFile)
+        ext.secrets[file.name] = [
+          ciphertextPath: ciphertextFile.name,
+          ciphertextLength: result.ciphertextLength,
+          iv: result.iv,
+          key: result.key,
+          plaintextLength: result.plaintextLength,
+        ]
+      }
+    }
+  }
+}
+
+class CryptoPluginDecryptFilesTask extends CryptoPluginBaseTask {
+  @TaskAction
+  void decryptFiles() {
+    inputs.properties.secrets.each { plaintextSecretMap ->
+      def secret = plaintextSecretMap.value
+      def key = createKeyFromBytes(secret.key)
+      def iv = new IvParameterSpec(secret.iv)
+      def ciphertext = null
+      def ciphertextFile = new File(inputs.properties.directory + secret.ciphertextPath)
+      ciphertextFile.withInputStream { is -> ciphertext = is.bytes }
+      def plaintext = decrypt(ciphertext, secret.ciphertextLength, secret.plaintextLength, key, iv).plaintext
+      def plaintextFilename = plaintextSecretMap.key
+      def plaintextFile = new File(inputs.properties.directory + plaintextFilename)
+      plaintextFile.withOutputStream { os -> os.write(plaintext) }
+    }
   }
 }

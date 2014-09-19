@@ -15,7 +15,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.helloclue.gradle.crypto:gradle-crypto:1.1'
+    classpath 'com.biowink.clue.gradle.crypto:gradle-crypto:1.1'
   }
 }
 
@@ -32,7 +32,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.helloclue.gradle.crypto:gradle-crypto:1.1'
+    classpath 'com.biowink.clue.gradle.crypto:gradle-crypto:1.1'
   }
 }
 
@@ -64,7 +64,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.helloclue.gradle.crypto:gradle-crypto:1.1'
+    classpath 'com.biowink.clue.gradle.crypto:gradle-crypto:1.1'
   }
 }
 

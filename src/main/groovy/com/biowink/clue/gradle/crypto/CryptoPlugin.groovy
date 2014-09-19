@@ -1,4 +1,4 @@
-package com.helloclue.gradle.crypto
+package com.biowink.clue.gradle.crypto
 
 import org.gradle.api.Project
 import org.gradle.api.Plugin

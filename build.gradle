@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'groovy'
 apply plugin: 'maven'
 
-group = 'com.helloclue.gradle.crypto'
+group = 'com.biowink.clue.gradle.crypto'
 
 repositories {
   mavenCentral()

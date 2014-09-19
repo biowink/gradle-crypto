@@ -77,7 +77,7 @@ class CryptoPluginEncryptTask extends CryptoPluginBaseTask {
   @TaskAction
   void encrypt() {
     SecretKeySpec key = generateKey()
-    ext.result = encrypt(inputs.properties.plaintext, key)
+    ext.secret = encrypt(inputs.properties.plaintext, key)
   }
 }
 
@@ -89,7 +89,7 @@ class CryptoPluginDecryptTask extends CryptoPluginBaseTask {
     def ciphertext = inputs.properties.ciphertext
     def ciphertextLength = inputs.properties.ciphertextLength
     def plaintextLength = inputs.properties.plaintextLength
-    ext.result = decrypt(ciphertext, ciphertextLength, plaintextLength, key, iv)
+    ext.plaintext = decrypt(ciphertext, ciphertextLength, plaintextLength, key, iv).plaintext
   }
 }
 

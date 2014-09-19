@@ -38,18 +38,14 @@ buildscript {
 
 apply plugin: 'gradle-crypto'
 
-gradleCrypto {
-  plaintext = "Hodor! Hodor, hodor?"
-}
-
+project.tasks.encrypt.inputs.property('plaintext', "Hodor! Hodor, hodor?".bytes)
 project.tasks.encrypt.doLast {
-    println "project.gradleCrypto.ciphertext: ${project.gradleCrypto.ciphertext}"
-    println "project.gradleCrypto.ciphertextLength: ${project.gradleCrypto.ciphertextLength}"
-    println "project.gradleCrypto.key: ${project.gradleCrypto.key}"
-    println "project.gradleCrypto.iv: ${project.gradleCrypto.iv}"
-    println "project.gradleCrypto.plaintextLength: ${project.gradleCrypto.plaintextLength}"
+    println "project.tasks.encrypt.ext.secret.ciphertext: ${project.tasks.encrypt.ext.secret.ciphertext}"
+    println "project.tasks.encrypt.ext.secret.ciphertextLength: ${project.tasks.encrypt.ext.secret.ciphertextLength}"
+    println "project.tasks.encrypt.ext.secret.key: ${project.tasks.encrypt.ext.secret.key}"
+    println "project.tasks.encrypt.ext.secret.iv: ${project.tasks.encrypt.ext.secret.iv}"
+    println "project.tasks.encrypt.ext.secret.plaintextLength: ${project.tasks.encrypt.ext.secret.plaintextLength}"
 }
-
 ```
 Run the encrypt task via `gradle encrypt`
 
@@ -70,18 +66,17 @@ buildscript {
 
 apply plugin: 'gradle-crypto'
 
-gradleCrypto {
-  ciphertext = "dZuX5azyPZ27xS1F7lUrcnzokps+efQ9P2VQSuOPIyI="
-  ciphertextLength = 32
-  key = "zuykuAYKC2vIWYTvZ+V1fw=="
-  iv = "4GfBiB1IhcOTDWkYmfy3Jg=="
-  plaintextLength = 20
-}
+project.tasks.decrypt.inputs.properties([
+  ciphertext: [61, 55, 120, 55, 93, 105, -50, 104, 0, -20, 73, -75, -107, 127, -111, 118, 58, -85, -74, 62, 100, -14, 52, 52, -74, -27, 125, 70, 20, 28, -108, -93] as byte[],
+  ciphertextLength: 32,
+  iv: [120, 11, 53, -81, 37, 52, 17, -88, -92, -84, -127, 105, -88, 55, 83, -128] as byte[],
+  key: [-112, 124, -54, -125, 99, -29, -24, 17, 38, -62, 98, 101, 8, -17, -120, 20] as byte[],
+  plaintextLength: 20,
+])
 
 project.tasks.decrypt.doLast {
-    println "project.gradleCrypto.plaintext: ${project.gradleCrypto.plaintext}"
+    println "project.tasks.decrypt.ext.plaintext: ${new String(project.tasks.decrypt.ext.plaintext)}"
 }
-
 ```
 Run the encrypt task via `gradle decrypt`
 

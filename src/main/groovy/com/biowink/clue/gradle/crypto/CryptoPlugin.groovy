@@ -16,6 +16,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider
 /**
  * @author pelle
  * Created: Wed Sep 03 15:26:28 CEST 2014
+ * Copyright 2014 Biowink GmbH
  */
 class CryptoPlugin implements Plugin<Project> {
 

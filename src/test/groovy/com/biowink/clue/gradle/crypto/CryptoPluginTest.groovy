@@ -6,6 +6,11 @@ import org.gradle.api.Project
 import org.junit.Test
 import static org.junit.Assert.*
 
+/**
+ * @author pelle
+ * Created: Wed Sep 03 15:26:28 CEST 2014
+ * Copyright 2014 Biowink GmbH
+ */
 class CryptoPluginTest {
   @Test
   void gradleCryptoPluginAddsEncryptTaskToProject() {

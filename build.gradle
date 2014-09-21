@@ -1,20 +1,28 @@
 buildscript {
   repositories {
-    mavenCentral()
+    jcenter()
   }
 
   dependencies {
     classpath "org.bouncycastle:bcprov-jdk16:1.45"
+    classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
+    classpath 'org.codehaus.groovy:groovy-backports-compat23:2.3.5'
   }
 }
 
 apply plugin: 'groovy'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 group = 'com.biowink.clue.gradle.crypto'
 
+project.ext {
+  description = 'Gradle plugin for encrypting and decrypting'
+  url = 'https://github.com/biowink/gradle-crypto'
+}
+
 repositories {
-  mavenCentral()
+  jcenter()
 }
 
 dependencies {
@@ -22,4 +30,65 @@ dependencies {
   compile localGroovy()
 
   compile "org.bouncycastle:bcprov-jdk16:1.45"
+}
+
+task sourceJar(type: Jar) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifact sourceJar { classifier 'sources' }
+
+      pom.withXml {
+        def root = asNode()
+        root.appendNode('name', 'Gradle plugin for cryptographic applications')
+        root.appendNode('description', "${project.description}")
+        root.appendNode('url', "${project.url}")
+
+        def scm = root.appendNode('scm')
+        scm.appendNode('url', "${project.url}")
+        scm.appendNode('connection', 'scm:https://peralmq@github.com/biowink/gradle-crypto.git')
+        scm.appendNode('developerConnection', 'scm:git://github.com/biowink/gradle-crypto.git')
+
+        def issues = root.appendNode( 'issueManagement' )
+        issues.appendNode( 'system', 'github' )
+        issues.appendNode( 'url', "${project.url}/issues")
+
+        def license = root.appendNode('licenses').appendNode('license')
+        license.appendNode('name', 'The Apache Software License, Version 2.0')
+        license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+        license.appendNode('distribution', 'repo')
+
+        def developers = root.appendNode('developers')
+        def developer = developers.appendNode('developer')
+        developer.appendNode('id', 'peralmq')
+        developer.appendNode('name', 'Pelle Almquist')
+      }
+    }
+  }
+}
+
+bintray {
+  user = bintrayUser
+  key = bintrayKey
+  publications = ['mavenJava']
+
+  pkg {
+    repo = 'gradle-plugins'
+    name = 'gradle-crypto'
+    licenses = ['Apache-2.0']
+    labels = ['cryptography', 'decrypt', 'encrypt']
+    websiteUrl = "${project.url}"
+    issueTrackerUrl = "${project.url}/issues"
+    vcsUrl = "${project.url}.git"
+    desc = "${project.description}"
+    publicDownloadNumbers = true
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.12'
 }

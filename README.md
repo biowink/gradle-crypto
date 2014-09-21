@@ -1,9 +1,15 @@
-#Gradle plugin for encrypting and decrypting strings
-A [Gradle](http://www.gradle.org/) plugin that exposes two tasks `encrypt` and `decrypt`.
-These tasks uses the cryptographic algorithm [AES](http://en.wikipedia.org/wiki/Advanced_Encryption_Standard) (with [CBC](http://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Cipher-block_chaining_.28CBC.29) and [PKCS7Padding](http://en.wikipedia.org/wiki/Padding_(cryptography)#PKCS7)) to encrypt or decrypt strings.
+#Gradle plugin for encrypting and decrypting
+A [Gradle](http://www.gradle.org/) plugin that exposes the tasks:
+
+* `encrypt`,
+* `decrypt`,
+* `encryptFiles`,
+* `decryptFiles`
+
+These tasks uses the cryptographic algorithm [AES](http://en.wikipedia.org/wiki/Advanced_Encryption_Standard) (with [CBC](http://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Cipher-block_chaining_.28CBC.29) and [PKCS7Padding](http://en.wikipedia.org/wiki/Padding_(cryptography)#PKCS7)) to encrypt or decrypt.
 
 ##How it works
-Once you've applied the `gradle-crypto` plugin you will have access to a new resource in your project. This resource is called `gradleCrypto` and is used for transferring data back and forth to the plugin.
+Once you've applied the `gradle-crypto` plugin you will have access to these tasks in your project. TaskInput and TaskOutput is used for transferring data back and forth to the tasks.
 
 ###Applying the plugin
 
@@ -15,7 +21,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.biowink.clue.gradle.crypto:gradle-crypto:1.1'
+    classpath 'com.biowink.clue.gradle.crypto:gradle-crypto:1.0'
   }
 }
 
@@ -32,7 +38,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.biowink.clue.gradle.crypto:gradle-crypto:1.1'
+    classpath 'com.biowink.clue.gradle.crypto:gradle-crypto:1.0'
   }
 }
 
@@ -60,7 +66,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.biowink.clue.gradle.crypto:gradle-crypto:1.1'
+    classpath 'com.biowink.clue.gradle.crypto:gradle-crypto:1.0'
   }
 }
 

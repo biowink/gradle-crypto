@@ -32,11 +32,11 @@ class CryptoPluginTest {
       0123456789'''.bytes
     project.tasks.encrypt.inputs.property('plaintext', plaintext)
     project.tasks.encrypt.execute()
-    assertNotNull(project.tasks.encrypt.ext.result.ciphertext)
-    assertNotNull(project.tasks.encrypt.ext.result.ciphertextLength)
-    assertNotNull(project.tasks.encrypt.ext.result.key)
-    assertNotNull(project.tasks.encrypt.ext.result.iv)
-    assertNotNull(project.tasks.encrypt.ext.result.plaintextLength)
+    assertNotNull(project.tasks.encrypt.ext.secret.ciphertext)
+    assertNotNull(project.tasks.encrypt.ext.secret.ciphertextLength)
+    assertNotNull(project.tasks.encrypt.ext.secret.key)
+    assertNotNull(project.tasks.encrypt.ext.secret.iv)
+    assertNotNull(project.tasks.encrypt.ext.secret.plaintextLength)
   }
 
   @Test
@@ -49,9 +49,9 @@ class CryptoPluginTest {
       0123456789'''.bytes
     project.tasks.encrypt.inputs.property('plaintext', plaintext)
     project.tasks.encrypt.execute()
-    project.tasks.decrypt.inputs.properties(project.tasks.encrypt.ext.result)
+    project.tasks.decrypt.inputs.properties(project.tasks.encrypt.ext.secret)
     project.tasks.decrypt.execute()
-    assertArrayEquals(project.tasks.decrypt.result.plaintext, plaintext)
+    assertArrayEquals(project.tasks.decrypt.plaintext, plaintext)
   }
 
   @Test

@@ -64,7 +64,7 @@ class CryptoPluginTest {
       new File('src/test/resources/startup.txt'),
     ])
     project.tasks.encryptFiles.execute()
-    assertEquals(2, project.tasks.encryptFiles.outputs.files.from.size())
+    assertEquals(2, project.tasks.encryptFiles.ext.secrets.size())
     def secret = project.tasks.encryptFiles.ext.secrets['counting.txt']
     assertNotNull(secret.ciphertextPath)
     assertEquals(80, secret.ciphertextLength)
@@ -73,7 +73,7 @@ class CryptoPluginTest {
     assertEquals(78, secret.plaintextLength)
 
     /* Cleanup */
-    project.tasks.encryptFiles.outputs.files.from.each { f -> f.delete() }
+    project.tasks.encryptFiles.ext.secrets.each { m -> new File('src/test/resources/' + m.value.ciphertextPath).delete() }
   }
 
   @Test
@@ -97,6 +97,6 @@ class CryptoPluginTest {
     assertEquals(expectedPlaintext, actualPlaintext)
 
     /* Cleanup */
-    project.tasks.encryptFiles.outputs.files.from.each { f -> f.delete() }
+    project.tasks.encryptFiles.ext.secrets.each { m -> new File('src/test/resources/' + m.value.ciphertextPath).delete() }
   }
 }

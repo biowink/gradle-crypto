@@ -105,10 +105,9 @@ class CryptoPluginEncryptFilesTask extends CryptoPluginBaseTask {
         def result = encrypt(plaintext, key)
         def ciphertextFile = File.createTempFile('enc.', '.enc', new File(file.parent))
         ciphertextFile.withOutputStream { os -> os.write(result.ciphertext) }
-        outputs.file(ciphertextFile)
         ext.secrets[file.name] = [
-          ciphertextPath: ciphertextFile.name,
           ciphertextLength: result.ciphertextLength,
+          ciphertextPath: ciphertextFile.name,
           iv: result.iv,
           key: result.key,
           plaintextLength: result.plaintextLength,

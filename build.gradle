@@ -6,7 +6,6 @@ buildscript {
   dependencies {
     classpath "org.bouncycastle:bcprov-jdk16:1.45"
     classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
-    classpath 'org.codehaus.groovy:groovy-backports-compat23:2.3.5'
   }
 }
 
@@ -92,5 +91,5 @@ bintray {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.12'
+  gradleVersion = '2.1'
 }
